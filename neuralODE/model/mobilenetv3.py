@@ -116,10 +116,10 @@ class MobileBottleneck(nn.Module):
 
 
 class MobileNetV3(nn.Module):
-    def __init__(self, n_class=1000, input_size=224, dropout=0.8, mode='small', width_mult=1.0):
+    def __init__(self, n_class=200, input_size=64, dropout=0.8, mode='small', width_mult=1.):
         super(MobileNetV3, self).__init__()
         input_channel = 16
-        last_channel = 1280
+        last_channel = 1024
         if mode == 'large':
             # refer to Table 1 in paper
             mobile_setting = [
@@ -144,8 +144,8 @@ class MobileNetV3(nn.Module):
             # refer to Table 2 in paper
             mobile_setting = [
                 # k, exp, c,  se,     nl,  s,
-                [3, 16,  16,  True,  'RE', 2],
-                [3, 72,  24,  False, 'RE', 2],
+                [3, 16,  16,  True,  'RE', 1],
+                [3, 72,  24,  False, 'RE', 1],
                 [3, 88,  24,  False, 'RE', 1],
                 [5, 96,  40,  True,  'HS', 2],
                 [5, 240, 40,  True,  'HS', 1],
@@ -222,26 +222,26 @@ class MobileNetV3(nn.Module):
                     nn.init.zeros_(m.bias)
 
 
-def mobilenetv3(pretrained=False, **kwargs):
-    model = MobileNetV3(**kwargs)
-    if pretrained:
-        state_dict = torch.load('mobilenetv3_small_67.4.pth.tar')
-        model.load_state_dict(state_dict, strict=True)
-        # raise NotImplementedError
-    return model
+# def mobilenetv3(pretrained=False, **kwargs):
+#     model = MobileNetV3(**kwargs)
+#     if pretrained:
+#         state_dict = torch.load('mobilenetv3_small_67.4.pth.tar')
+#         model.load_state_dict(state_dict, strict=True)
+#         # raise NotImplementedError
+#     return model
 
 
-if __name__ == '__main__':
-    net = mobilenetv3()
-    print('mobilenetv3:\n', net)
-    print('Total params: %.2fM' % (sum(p.numel() for p in net.parameters())/1000000.0))
-    input_size=(1, 3, 224, 224)
-    # pip install --upgrade git+https://github.com/kuan-wang/pytorch-OpCounter.git
-    from thop import profile
-    flops, params = profile(net, input_size=input_size)
-    # print(flops)
-    # print(params)
-    print('Total params: %.2fM' % (params/1000000.0))
-    print('Total flops: %.2fM' % (flops/1000000.0))
-    x = torch.randn(input_size)
-    out = net(x)
+# if __name__ == '__main__':
+#     net = mobilenetv3()
+#     print('mobilenetv3:\n', net)
+#     print('Total params: %.2fM' % (sum(p.numel() for p in net.parameters())/1000000.0))
+#     input_size=(1, 3, 224, 224)
+#     # pip install --upgrade git+https://github.com/kuan-wang/pytorch-OpCounter.git
+#     from thop import profile
+#     flops, params = profile(net, input_size=input_size)
+#     # print(flops)
+#     # print(params)
+#     print('Total params: %.2fM' % (params/1000000.0))
+#     print('Total flops: %.2fM' % (flops/1000000.0))
+#     x = torch.randn(input_size)
+#     out = net(x)
