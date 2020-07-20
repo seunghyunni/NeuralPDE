@@ -5,7 +5,6 @@ import torch.nn.functional as F
 import torch.optim as optim
 from torchvision import datasets, transforms
 from torch.autograd import Variable
-from util.transforms import Identity
 import logging
 import torch
 import os
@@ -17,6 +16,15 @@ FORMAT_MINIMAL = '%(message)s'
 logger = logging.getLogger('neuralODE')
 logging.basicConfig(format=FORMAT)
 logger.setLevel(logging.DEBUG)
+
+
+class Identity(nn.Module):
+    def __init__(self, channel):
+        super(Identity, self).__init__()
+
+    def forward(self, x):
+        return x
+
 
 def makedirs(dirname):
     if not os.path.exists(dirname):
